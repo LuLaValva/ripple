@@ -61,9 +61,13 @@ export function emit_component(component, source, analysis) {
 	/** @type {string[]} */
 	const lines = [];
 
-	const input_type_text = extract_input_type(component, source);
-	if (input_type_text !== null) {
-		lines.push(`export type Input = ${input_type_text};`);
+	const input_type = extract_input_type(component, source);
+	if (input_type !== null) {
+		lines.push(
+			input_type.kind === 'interface'
+				? `export interface Input ${input_type.text}`
+				: `export type Input = ${input_type.text};`,
+		);
 		lines.push('');
 	}
 
@@ -138,12 +142,20 @@ function extract_input_binding(component, source) {
 }
 
 /**
- * Derive `export type Input = ...` from the first component parameter.
- * Returns `null` if no type annotation is present.
+ * Derive Marko's `export Input` declaration from the first component
+ * parameter's type annotation. Returns `null` if no annotation is
+ * present.
+ *
+ * Prefers `export interface Input { ... }` when the annotation is a bare
+ * object type literal (`{ ... }`), since the interface form composes
+ * with `declare module` augmentation downstream and reads more naturally
+ * to TS users. Bails to `export type Input = ...;` for anything else
+ * (type references, unions, intersections, mapped types, function types,
+ * etc.) where the alias form is required or strictly clearer.
  *
  * @param {any} component
  * @param {Sliceable} source
- * @returns {string | null}
+ * @returns {{ kind: 'type' | 'interface', text: string } | null}
  */
 function extract_input_type(component, source) {
 	const params = component.params || [];
@@ -160,7 +172,9 @@ function extract_input_type(component, source) {
 	if (!inner || typeof inner.start !== 'number' || typeof inner.end !== 'number') {
 		return null;
 	}
-	return source.slice(inner.start, inner.end).trim();
+	const text = source.slice(inner.start, inner.end).trim();
+	const kind = inner.type === 'TSTypeLiteral' ? 'interface' : 'type';
+	return { kind, text };
 }
 
 // =====================================================================
