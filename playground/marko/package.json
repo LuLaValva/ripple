@@ -1,0 +1,26 @@
+{
+  "name": "@tsrx/marko-playground",
+  "private": true,
+  "version": "0.0.1",
+  "type": "module",
+  "scripts": {
+    "dev": "vite --host",
+    "build": "vite build",
+    "preview": "vite preview --host",
+    "debug-volar": "node ../../scripts/debug-mode.js tsx @tsrx/marko",
+    "debug-tsx": "node ../../scripts/debug-mode.js tsx @tsrx/marko"
+  },
+  "dependencies": {
+    "@marko/runtime-tags": "catalog:default",
+    "marko": "catalog:default"
+  },
+  "devDependencies": {
+    "@marko/compiler": "catalog:default",
+    "@marko/vite": "catalog:default",
+    "@tsrx/marko": "workspace:*",
+    "@tsrx/typescript-plugin": "workspace:*",
+    "@tsrx/vite-plugin-marko": "workspace:*",
+    "typescript": "catalog:default",
+    "vite": "catalog:default"
+  }
+}

@@ -1,0 +1,36 @@
+{
+  "name": "@tsrx/marko",
+  "description": "Marko Tags API compiler built on @tsrx/core",
+  "license": "MIT",
+  "author": "Dominic Gannaway",
+  "version": "0.0.1",
+  "type": "module",
+  "publishConfig": {
+    "access": "public"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Ripple-TS/ripple.git",
+    "directory": "packages/tsrx-marko"
+  },
+  "exports": {
+    ".": {
+      "types": "./types/index.d.ts",
+      "default": "./src/index.js"
+    }
+  },
+  "dependencies": {
+    "@tsrx/core": "workspace:*",
+    "is-reference": "catalog:default",
+    "magic-string": "catalog:default",
+    "zimmerframe": "catalog:default"
+  },
+  "devDependencies": {
+    "@types/estree": "catalog:default",
+    "typescript": "catalog:default"
+  },
+  "files": [
+    "src",
+    "types"
+  ]
+}

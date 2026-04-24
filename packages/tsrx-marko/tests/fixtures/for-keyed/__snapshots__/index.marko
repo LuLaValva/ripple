@@ -1,0 +1,7 @@
+export type Input = { items: { id: string }[] };
+
+<const/{ items } = input>
+
+<for|item| of=items by="id">
+  <li>${item.id}</li>
+</for>

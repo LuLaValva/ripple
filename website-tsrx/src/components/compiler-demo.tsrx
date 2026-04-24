@@ -14,12 +14,21 @@ const TARGET_OPTIONS = [
 	{ value: 'preact', label: 'Preact' },
 	{ value: 'ripple', label: 'Ripple' },
 	{ value: 'solid', label: 'Solid' },
+	{ value: 'marko', label: 'Marko' },
 ];
 const TARGET_LABELS: Record<string, string> = {
 	react: 'React output',
 	preact: 'Preact output',
 	ripple: 'Ripple output',
 	solid: 'Solid output',
+	marko: 'Marko output',
+};
+const TARGET_HIGHLIGHT_LANGS: Record<string, string> = {
+	react: 'tsx',
+	preact: 'tsx',
+	ripple: 'tsx',
+	solid: 'tsx',
+	marko: 'marko',
 };
 
 const VALID_TARGETS = new Set(TARGET_OPTIONS.map((o) => o.value));
@@ -91,6 +100,7 @@ export component CompilerDemo() {
 	let request_compile = () => {};
 	let load_source = (_next_source: string) => {};
 	let format_source = async () => {};
+	let set_output_lang = (_lang: string) => {};
 
 	effect(() => {
 		if (!source_ref.value || !output_ref.value) {
@@ -116,7 +126,7 @@ export component CompilerDemo() {
 		};
 
 		(async () => {
-			const [{ EditorState }, { oneDark }, {
+			const [{ EditorState, Compartment }, { oneDark }, {
 				history,
 				defaultKeymap,
 				historyKeymap,
@@ -180,13 +190,16 @@ export component CompilerDemo() {
 				shared_theme,
 			];
 
+			const output_highlight_compartment = new Compartment();
+			const initial_output_lang = TARGET_HIGHLIGHT_LANGS[selected_target.value] ?? 'tsx';
+
 			const readonly_extensions = [
 				lineNumbers(),
 				EditorState.readOnly.of(true),
 				EditorView.editable.of(false),
 				EditorView.lineWrapping,
 				EditorState.tabSize.of(2),
-				shiki_highlight('tsx'),
+				output_highlight_compartment.of(shiki_highlight(initial_output_lang)),
 				shared_theme,
 			];
 
@@ -356,6 +369,16 @@ export component CompilerDemo() {
 				parent: output_ref.value,
 			});
 
+			set_output_lang = (lang: string) => {
+				if (!output_view) {
+					return;
+				}
+
+				output_view.dispatch({
+					effects: output_highlight_compartment.reconfigure(shiki_highlight(lang)),
+				});
+			};
+
 			await compile_source(latest_source);
 			editors_ready = true;
 		})();
@@ -365,6 +388,7 @@ export component CompilerDemo() {
 			request_compile = () => {};
 			load_source = (_next_source: string) => {};
 			format_source = async () => {};
+			set_output_lang = (_lang: string) => {};
 			window.clearTimeout(debounce_id);
 			window.clearTimeout(hash_debounce_id);
 			active_controller?.abort();
@@ -381,6 +405,7 @@ export component CompilerDemo() {
 			selected_snippet.value = CUSTOM_SNIPPET_VALUE;
 		}
 
+		set_output_lang(TARGET_HIGHLIGHT_LANGS[selected_target.value] ?? 'tsx');
 		request_compile();
 		const encoded = encode_hash(latest_source, selected_target.value);
 		if (encoded) {

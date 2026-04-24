@@ -1,0 +1,36 @@
+{
+  "name": "@tsrx/vite-plugin-marko",
+  "description": "Vite plugin for @tsrx/marko (.tsrx modules) targeting Marko 6",
+  "license": "MIT",
+  "author": "Dominic Gannaway",
+  "version": "0.0.1",
+  "type": "module",
+  "publishConfig": {
+    "access": "public"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Ripple-TS/ripple.git",
+    "directory": "packages/vite-plugin-marko"
+  },
+  "exports": {
+    ".": {
+      "types": "./types/index.d.ts",
+      "default": "./src/index.js"
+    }
+  },
+  "dependencies": {
+    "@tsrx/marko": "workspace:*"
+  },
+  "peerDependencies": {
+    "vite": "*"
+  },
+  "devDependencies": {
+    "typescript": "catalog:default",
+    "vite": "catalog:default"
+  },
+  "files": [
+    "src",
+    "types"
+  ]
+}

@@ -1,4 +1,5 @@
 import { RenderRoute, ServerRoute } from '@ripple-ts/vite-plugin';
+import { compile as compile_marko } from '@tsrx/marko';
 import { compile as compile_preact } from '@tsrx/preact';
 import * as ripple_prettier_plugin from '@tsrx/prettier-plugin';
 import { compile as compile_react } from '@tsrx/react';
@@ -7,7 +8,7 @@ import { compile as compile_solid } from '@tsrx/solid';
 import { format } from 'prettier';
 
 const MAX_SOURCE_LENGTH = 12000;
-const VALID_TARGETS = ['react', 'preact', 'ripple', 'solid'] as const;
+const VALID_TARGETS = ['react', 'preact', 'ripple', 'solid', 'marko'] as const;
 
 type CompileTarget = (typeof VALID_TARGETS)[number];
 
@@ -99,6 +100,29 @@ async function compile_target(target: CompileTarget, source: string) {
 		};
 	}
 
+	if (target === 'marko') {
+		const marko_result = compile_marko(source, 'LiveDemo.tsrx');
+		const extra_files = (marko_result.files ?? []).filter(
+			(file) => file.filename !== 'LiveDemo.marko',
+		);
+		const code = extra_files.length
+			? [
+					marko_result.code.trimEnd(),
+					...extra_files.map(
+						(file) => `\n\n<!-- ${file.filename} -->\n${file.code.trimEnd()}`,
+					),
+				].join('')
+			: marko_result.code;
+
+		return {
+			target,
+			output: {
+				code,
+				css: await format_css(marko_result.css?.code ?? ''),
+			},
+		};
+	}
+
 	const ripple_result = compile_ripple(source, 'LiveDemo.tsrx');
 
 	return {
@@ -182,7 +206,7 @@ export const routes = [
 
 			if (!is_valid_target(target)) {
 				return Response.json(
-					{ error: 'Target must be one of: react, preact, ripple, solid.' },
+					{ error: 'Target must be one of: react, preact, ripple, solid, marko.' },
 					{ status: 400 },
 				);
 			}

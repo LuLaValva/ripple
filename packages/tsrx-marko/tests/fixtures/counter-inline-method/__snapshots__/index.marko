@@ -1,0 +1,12 @@
+<let/count=0>
+<button onClick() {
+		if (count >= 10) {
+			count = 0;
+		} else {
+			count += 1;
+		}
+	}>Count: ${count}</button>
+<if=(count > 5)>
+  <strong>Big Number!</strong>
+  <button onClick() { count = 0; }>Reset</button>
+</if>

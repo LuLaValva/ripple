@@ -1,0 +1,5 @@
+<let/count=0>
+<button onClick() { count += 1; }>+</button>
+<button title() { return `n=${count}`; }>?</button>
+<input onInput(e: InputEvent) { console.log(e); }/>
+<button onClick() { return count = 0; } disabled=count === 0>reset</button>

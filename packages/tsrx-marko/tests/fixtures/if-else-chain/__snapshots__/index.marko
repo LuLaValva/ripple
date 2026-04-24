@@ -1,0 +1,13 @@
+export type Input = { n: number };
+
+<const/{ n } = input>
+
+<if=(n > 0)>
+  <p>pos</p>
+</if>
+<else if=(n < 0)>
+  <p>neg</p>
+</else>
+<else>
+  <p>zero</p>
+</else>

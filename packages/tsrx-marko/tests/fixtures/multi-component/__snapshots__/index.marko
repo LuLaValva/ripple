@@ -1,0 +1,7 @@
+export type Input = { items: string[] };
+
+<const/{ items } = input>
+
+<for|item, i| of=items>
+  <Child label=item/>
+</for>

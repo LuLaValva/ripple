@@ -1,0 +1,7 @@
+<let/count=0>
+<const/reset=(() => { count = 0; })>
+<button onClick=reset>reset a</button>
+<button onClick=reset>reset b</button>
+<div onPointerDown(e: PointerEvent) {
+		console.log(e.type, count);
+	} title() { return `n=${count}`; }>raw template: ${count}</div>
